@@ -5,7 +5,7 @@ This project is designed to integrate near-realtime smart meter data captured us
 The code herein receives the rather cumbersome zigbee Smart Energy Profile data, encoded in JSON, from GlowMarkt's MQTT broker and emits a reduced, but far easier to consume, JSON payload to a different MQTT broker.
 
 ## Health Warning
-I only received my GlowMarkt IHD today and this is the result of just a few hours work. It's functioning nicely for me, at the moment, but the code may be brittle; it doesn't take much care over runtime errors. So it might not work as-is, for you. Or it might work now but break if the data from GlowMarkt changes. Of course, there are not guarantees. Fixes or improvements would be most welcome!
+I only received my GlowMarkt IHD today and this is the result of just a few hours work. It's functioning nicely for me, at the moment, but the code may be brittle; it doesn't take much care over runtime errors. So it might not work as-is, for you. Or it might work now but break if the data from GlowMarkt changes. Of course, there are no guarantees. Fixes or improvements would be most welcome!
 
 ## Technology Stack
 
@@ -17,17 +17,17 @@ The included Dockerfile builds an image targeting 32-bit ARM for my Raspberry Pi
 
 ## Project Structure
 
-Most of the classes in this project are purely to support deserializing the JSON from the GlowMarkt MQTT message. If you look at the relevant code (start with GlowMqttMessage and work down), you'll see that most properties are annotated with JsonPropertyNames that have numeric names. This is how the incoming JSON is structured and is needed for the deserializer. Within our code, it's preferable to refer to properties using much more meaningful names. Most of the data in the incoming message is hexadecimal. The code takes care of the necessary type conversions to provide a more reasonable representation.
+Most of the classes in this project are purely to support deserializing the JSON from the GlowMarkt MQTT message. If you look at the relevant code (start with [GlowMqttMessage.cs](https://github.com/smorgo/GlowMeterDataMonitor/blob/master/GlowMqttMessage.cs) and work down), you'll see that most properties are annotated with JsonPropertyName attributes that specify numeric names. This is how the incoming JSON is structured and is needed for the deserializer. Within our code, it's preferable to refer to properties using much more meaningful names. Most of the data in the incoming message is hexadecimal. The code takes care of the necessary type conversions to provide a more reasonable representation.
 
-The OutgoingMeteringMessage class defines the MQTT message that is derived from the GlowMarkt MQTT message and is posted to a specified broker and topic.
+The [OutgoingMeteringMessage.cs](https://github.com/smorgo/GlowMeterDataMonitor/blob/master/OutgoingMeteringMessage.cs) class defines the MQTT message that is derived from the GlowMarkt MQTT message and is posted to a specified broker and topic.
 
 ## Configuration
 
-The basic configuration is defined in appsettings.json. You can update this file for your MQTT settings, but I recommend that you use a different mechanism.
+The basic configuration is defined in [appsettings.json](https://github.com/smorgo/GlowMeterDataMonitor/blob/master/appsettings.json). You can update this file for your MQTT settings, but I recommend that you use a different mechanism.
 
 The app can be configured with environment variables, command-line arguments or with a separate secrets.json file. I use .NET 6.0 configuration, adopting the Options pattern.
 
-When deployed to Kubernetes, I override the default configuration with environment variables. The sensitive settings are sourced from a Kubernetes secret. See Deployment.yaml for an example of Kubernetes configuration. I'm keeping my secret, secret, though.
+When deployed to Kubernetes, I override the default configuration with environment variables. The sensitive settings are sourced from a Kubernetes secret. See [deployment.yaml](https://github.com/smorgo/GlowMeterDataMonitor/blob/master/deployment.yaml) for an example of Kubernetes configuration. I'm keeping my secret, secret, though.
 
 
 
