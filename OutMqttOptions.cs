@@ -1,0 +1,2 @@
+public class OutMqttOptions : MqttOptions
+{}

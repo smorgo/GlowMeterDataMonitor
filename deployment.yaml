@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: glow-ingest
+  namespace: smorgo-glow
+  labels:
+    app: glow-ingest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: glow-ingest
+  template:
+    metadata:
+      labels:
+        app: glow-ingest
+    spec:
+      containers:
+        - name: glow-ingest
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: Node__Name
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: POD_SERVICE_ACCOUNT
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
+          - name: DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE
+            value: "false"
+          - name: InMqtt__Broker
+            valueFrom:
+              secretKeyRef:
+                name: glowsecret
+                key: broker
+                optional: false
+          - name: InMqtt__Port
+            valueFrom:
+              secretKeyRef:
+                name: glowsecret
+                key: port
+                optional: false
+          - name: InMqtt__Topic
+            valueFrom:
+              secretKeyRef:
+                name: glowsecret
+                key: topic
+                optional: false
+          - name: InMqtt__Username
+            valueFrom:
+              secretKeyRef:
+                name: glowsecret
+                key: username
+                optional: false
+          - name: InMqtt__Password
+            valueFrom:
+              secretKeyRef:
+                name: glowsecret
+                key: password
+                optional: false
+          - name: OutMqtt__Broker
+            value: "mosquitto-service.mqtt"
+          - name: OutMqtt__Port
+            value: "1883"
+          - name: Mqtt__Topic
+            value: "meter/data"
+          image: smorgo/glowmeterdatamonitor:v0.2
