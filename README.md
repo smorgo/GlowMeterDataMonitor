@@ -4,6 +4,9 @@ This project is designed to integrate near-realtime smart meter data captured us
 
 The code herein receives the rather cumbersome zigbee Smart Energy Profile data, encoded in JSON, from GlowMarkt's MQTT broker and emits a reduced, but far easier to consume, JSON payload to a different MQTT broker.
 
+## Health Warning
+I only received my GlowMarkt IHD today and this is the result of just a few hours work. It's functioning nicely for me, at the moment, but the code may be brittle; it doesn't take much care over runtime errors. So it might not work as-is, for you. Or it might work now but break if the data from GlowMarkt changes. Of course, there are not guarantees. Fixes or improvements would be most welcome!
+
 ## Technology Stack
 
 The project was developed using C# and .NET 6.0 to run on Raspberry Pi. Specifically, I package my applications as microservices and run them on a K3S Kubernetes cluster.
